@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import br.com.server.resource.config.CoreFeignConfiguration;
 import feign.Headers;
 
-@FeignClient(name = "authorization-server", url = "http://localhost:8090/oauth/check_token", configuration = CoreFeignConfiguration.class)
+@FeignClient(value = "ms-authentication", configuration = CoreFeignConfiguration.class)
 public interface AuthorizationService {
 
     @Headers("Content-Type: application/x-www-form-urlencoded")
-    @GetMapping
+    @GetMapping("/oauth/check_token")
     Map<String, Object> getAcessToken(@RequestParam(value = "token") String token);
 
 }
