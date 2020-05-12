@@ -1,9 +1,13 @@
 package br.com.server.resource.handle;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +63,13 @@ public class DefaultControllerAdvice {
         errors.put(messageSource.getMessage("message", null, null), messageSource.getMessage("internal.server.error", null, null));
         log.error(ex.getLocalizedMessage());
         return errors;
+    }
+
+    @ExceptionHandler(FeignException.class)
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleEmailNotConfirmedExceptions(FeignException ex) throws IOException {
+        final Map<String, String> map = new ObjectMapper().readValue(ex.responseBody().get().array(), new TypeReference<Map<String, String>>() {});
+        return new ResponseEntity<Map<String, String>>(map, HttpStatus.valueOf(ex.status()));
     }
 
 }
