@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 
 import br.com.server.resource.service.CustomRemoteTokenService;
 import br.com.server.resource.service.CustomTokenExtractor;
+import org.springframework.security.web.AuthenticationEntryPoint;
 
 @Configuration
 @EnableResourceServer
@@ -28,7 +29,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId(resourceId).authenticationManager(authenticationManagerBean())
-                .tokenExtractor(new CustomTokenExtractor());
+                .tokenExtractor(new CustomTokenExtractor()).authenticationEntryPoint(customAuthEntryPoint());
     }
 
     @Bean
@@ -48,4 +49,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable().csrf().disable().anonymous().and().authorizeRequests().anyRequest().authenticated();
     }
+
+    @Bean
+    public AuthenticationEntryPoint customAuthEntryPoint(){
+        return new RestDefaultAuthenticationEntryPoint();
+    }
+
 }

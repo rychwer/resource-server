@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -67,7 +68,7 @@ public class DefaultControllerAdvice {
 
     @ExceptionHandler(FeignException.class)
     @ResponseBody
-    public ResponseEntity<Map<String, String>> handleEmailNotConfirmedExceptions(FeignException ex) throws IOException {
+    public ResponseEntity<Map<String, String>> feignExceptions(FeignException ex) throws IOException {
         final Map<String, String> map = new ObjectMapper().readValue(ex.responseBody().get().array(), new TypeReference<Map<String, String>>() {});
         return new ResponseEntity<Map<String, String>>(map, HttpStatus.valueOf(ex.status()));
     }

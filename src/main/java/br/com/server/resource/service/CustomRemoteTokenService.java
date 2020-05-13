@@ -1,5 +1,6 @@
 package br.com.server.resource.service;
 
+import feign.FeignException;
 import feign.RetryableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
@@ -29,6 +30,8 @@ public class CustomRemoteTokenService implements ResourceServerTokenServices {
             return tokenConverter.extractAuthentication(map);
         } catch (RetryableException ex) {
             throw new InvalidTokenException(ex.getCause().getLocalizedMessage());
+        } catch (FeignException ex) {
+            throw new InvalidTokenException(ex.contentUTF8());
         } catch (Exception ex) {
             throw new InvalidTokenException(ex.getCause().getLocalizedMessage());
         }
